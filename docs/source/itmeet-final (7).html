@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>IT.МИТ — Экосистема IT.МОСКВА</title>
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+  }
+
+  body {
+    background-color: #03060c;
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 16px;
+  }
+
+  .app-shell {
+    width: 100%;
+    max-width: 410px;
+    height: 780px;
+    max-height: 92vh;
+    background: radial-gradient(circle at 85% 15%, rgba(88, 43, 145, 0.45) 0%, transparent 45%),
+                radial-gradient(circle at 15% 85%, rgba(16, 86, 82, 0.4) 0%, transparent 50%),
+                #070d19;
+    border-radius: 36px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* HEADER LOGO */
+  .app-header {
+    padding: 20px 20px 10px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .logo-title {
+    font-size: 26px;
+    font-weight: 900;
+    font-style: italic;
+    letter-spacing: 0.5px;
+    color: #ffffff;
+    line-height: 1;
+  }
+
+  .logo-title span {
+    color: #5b82ff;
+  }
+
+  .logo-sub {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+    color: rgba(255, 255, 255, 0.65);
+    margin-top: 4px;
+    text-transform: uppercase;
+  }
+
+  .logo-sub span {
+    color: #5b82ff;
+    font-style: italic;
+  }
+
+  /* SCREENS */
+  .screen {
+    display: none;
+    flex: 1;
+    flex-direction: column;
+    padding: 10px 20px 16px;
+    overflow-y: auto;
+  }
+
+  .screen.active {
+    display: flex;
+  }
+
+  .screen::-webkit-scrollbar {
+    width: 4px;
+  }
+  .screen::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+  }
+
+  /* AUTH SCREEN */
+  .auth-card {
+    background: rgba(17, 25, 43, 0.72);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 20px;
+    margin-top: 8px;
+  }
+
+  .auth-tabs {
+    display: flex;
+    background: rgba(7, 13, 25, 0.7);
+    border-radius: 14px;
+    padding: 4px;
+    margin-bottom: 16px;
+  }
+
+  .auth-tab {
+    flex: 1;
+    padding: 9px;
+    border: none;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  .auth-tab.active {
+    background: #5b82ff;
+    color: #ffffff;
+  }
+
+  .field-label {
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: rgba(255, 255, 255, 0.55);
+    margin-bottom: 5px;
+    margin-top: 10px;
+  }
+
+  .input-field {
+    width: 100%;
+    padding: 11px 14px;
+    background: rgba(7, 13, 25, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: #ffffff;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .input-field:focus {
+    border-color: #5b82ff;
+  }
+
+  .checkbox-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 14px;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.35;
+    cursor: pointer;
+  }
+
+  .checkbox-row input {
+    margin-top: 2px;
+    accent-color: #5b82ff;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+
+  .policy-link {
+    color: #5b82ff;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .auth-error {
+    color: #ff6b6b;
+    font-size: 12px;
+    margin-top: 10px;
+    text-align: center;
+    min-height: 16px;
+  }
+
+  .safety-note {
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: rgba(91, 130, 255, 0.08);
+    border: 1px solid rgba(91, 130, 255, 0.22);
+    border-radius: 16px;
+    font-size: 11.5px;
+    color: rgba(255, 255, 255, 0.75);
+    line-height: 1.4;
+  }
+
+  .safety-note strong {
+    color: #ffffff;
+    display: block;
+    margin-bottom: 3px;
+  }
+
+  /* BUTTONS */
+  .btn-primary {
+    width: 100%;
+    padding: 13px;
+    margin-top: 14px;
+    background: linear-gradient(135deg, #5b82ff 0%, #3d63e6 100%);
+    border: none;
+    border-radius: 14px;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(91, 130, 255, 0.35);
+    transition: transform 0.15s, opacity 0.15s;
+  }
+
+  .btn-primary:active {
+    transform: scale(0.98);
+  }
+
+  .btn-danger {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    background: rgba(255, 82, 82, 0.12);
+    border: 1px solid rgba(255, 82, 82, 0.3);
+    border-radius: 14px;
+    color: #ff6b6b;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* STATUS BADGES */
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(7, 13, 25, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .status-dot.online {
+    background: #22c55e;
+    box-shadow: 0 0 8px #22c55e;
+  }
+
+  .status-dot.offline {
+    background: #64748b;
+  }
+
+  /* SEARCH / SWIPE SCREEN (COMPACT CARD WITHOUT HUGE EMPTY SPACE) */
+  .swipe-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .candidate-card {
+    background: rgba(17, 25, 43, 0.78);
+    backdrop-filter: blur(18px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 26px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    transition: transform 0.32s ease, opacity 0.32s ease;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
+  }
+
+  .candidate-card.swipe-left {
+    transform: translateX(-115%) rotate(-8deg);
+    opacity: 0;
+  }
+
+  .candidate-card.swipe-right {
+    transform: translateX(115%) rotate(8deg);
+    opacity: 0;
+  }
+
+  .card-top-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .group-badge {
+    padding: 5px 11px;
+    background: rgba(91, 130, 255, 0.16);
+    border: 1px solid rgba(91, 130, 255, 0.32);
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #93b0ff;
+  }
+
+  .candidate-identity {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .candidate-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #273c75 0%, #5b82ff 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 800;
+    color: #ffffff;
+    flex-shrink: 0;
+    border: 2px solid rgba(255, 255, 255, 0.18);
+  }
+
+  .candidate-name {
+    font-size: 22px;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1.2;
+  }
+
+  .candidate-role {
+    font-size: 13px;
+    font-weight: 600;
+    color: #7ea0ff;
+    margin-top: 2px;
+  }
+
+  .candidate-bio {
+    font-size: 13.5px;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.85);
+    background: rgba(7, 13, 25, 0.5);
+    padding: 12px 14px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .superpower-box {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.78);
+    padding: 9px 12px;
+    border-radius: 12px;
+    background: rgba(91, 130, 255, 0.09);
+    border-left: 3px solid #5b82ff;
+  }
+
+  .superpower-box span {
+    color: #9eb7ff;
+    font-weight: 700;
+  }
+
+  .tags-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+
+  .skill-tag {
+    padding: 5px 11px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #dbe6ff;
+  }
+
+  /* ONLY TWO ACTION BUTTONS (NO MIDDLE BUTTON) */
+  .card-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 28px;
+    margin-top: 4px;
+  }
+
+  .action-btn {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    border: none;
+    font-size: 22px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.18s;
+  }
+
+  .action-btn:hover {
+    transform: scale(1.07);
+  }
+
+  .action-btn:active {
+    transform: scale(0.95);
+  }
+
+  .btn-pass {
+    background: rgba(255, 82, 82, 0.14);
+    border: 1px solid rgba(255, 82, 82, 0.35);
+    color: #ff6b6b;
+  }
+
+  .btn-like {
+    background: linear-gradient(135deg, #5b82ff 0%, #3a60e5 100%);
+    color: #ffffff;
+    box-shadow: 0 8px 24px rgba(91, 130, 255, 0.45);
+  }
+
+  .empty-state {
+    background: rgba(17, 25, 43, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 28px 20px;
+    text-align: center;
+  }
+
+  .empty-state h3 {
+    font-size: 17px;
+    margin-bottom: 8px;
+  }
+
+  .empty-state p {
+    font-size: 12.5px;
+    color: rgba(255, 255, 255, 0.65);
+    line-height: 1.45;
+  }
+
+  /* CHATS SCREEN */
+  .section-title {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 12px;
+  }
+
+  .chat-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: rgba(17, 25, 43, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 18px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .chat-item:hover {
+    background: rgba(27, 39, 66, 0.85);
+  }
+
+  .chat-avatar-wrap {
+    position: relative;
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+  }
+
+  .chat-avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #273c75 0%, #5b82ff 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 17px;
+  }
+
+  .avatar-status-dot {
+    position: absolute;
+    bottom: 1px;
+    right: 1px;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    border: 2px solid #11192b;
+  }
+
+  .avatar-status-dot.online {
+    background: #22c55e;
+  }
+
+  .avatar-status-dot.offline {
+    background: #64748b;
+  }
+
+  .chat-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .chat-name-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .chat-name {
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .chat-status-text {
+    font-size: 10.5px;
+    color: rgba(255, 255, 255, 0.55);
+  }
+
+  .chat-status-text.online {
+    color: #4ade80;
+  }
+
+  .chat-preview {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.65);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 3px;
+  }
+
+  /* ACTIVE DIALOG */
+  .dialog-box {
+    display: none;
+    flex-direction: column;
+    height: 100%;
+    background: rgba(17, 25, 43, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 14px;
+  }
+
+  .dialog-box.active {
+    display: flex;
+  }
+
+  .dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .btn-back {
+    background: none;
+    border: none;
+    color: #7ea0ff;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .dialog-peer-meta {
+    text-align: center;
+  }
+
+  .dialog-peer-name {
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .dialog-peer-status {
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: 2px;
+  }
+
+  .dialog-peer-status.online {
+    color: #4ade80;
+  }
+
+  .btn-report {
+    padding: 5px 10px;
+    background: rgba(255, 82, 82, 0.14);
+    border: 1px solid rgba(255, 82, 82, 0.3);
+    border-radius: 12px;
+    color: #ff6b6b;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .messages-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 2px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .msg-bubble {
+    max-width: 82%;
+    padding: 10px 13px;
+    border-radius: 16px;
+    font-size: 12.5px;
+    line-height: 1.4;
+  }
+
+  .msg-peer {
+    align-self: flex-start;
+    background: rgba(255, 255, 255, 0.09);
+    border-bottom-left-radius: 4px;
+  }
+
+  .msg-me {
+    align-self: flex-end;
+    background: #5b82ff;
+    color: #ffffff;
+    border-bottom-right-radius: 4px;
+  }
+
+  .msg-system {
+    align-self: center;
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 11px;
+    padding: 6px 12px;
+    border-radius: 12px;
+    text-align: center;
+  }
+
+  .chat-input-row {
+    display: flex;
+    gap: 8px;
+    padding-top: 8px;
+  }
+
+  .chat-input {
+    flex: 1;
+    padding: 10px 14px;
+    background: rgba(7, 13, 25, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    color: #ffffff;
+    font-size: 13px;
+    outline: none;
+  }
+
+  .btn-send {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: #5b82ff;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  /* PROFILE SCREEN */
+  .profile-card {
+    background: rgba(17, 25, 43, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 18px;
+  }
+
+  .profile-header-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 12px;
+  }
+
+  .profile-avatar {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #273c75 0%, #5b82ff 100%);
+    border: 2px solid #5b82ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 800;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .btn-upload-photo {
+    margin-top: 6px;
+    padding: 5px 11px;
+    background: rgba(91, 130, 255, 0.16);
+    border: 1px solid rgba(91, 130, 255, 0.35);
+    border-radius: 10px;
+    color: #93b0ff;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* TAB BAR */
+  .tab-bar {
+    display: none;
+    background: rgba(10, 16, 30, 0.92);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 10px 12px 14px;
+    flex-shrink: 0;
+  }
+
+  .tab-bar.visible {
+    display: flex;
+  }
+
+  .tab-btn {
+    flex: 1;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 6px;
+    transition: color 0.2s;
+  }
+
+  .tab-btn.active {
+    color: #5b82ff;
+  }
+
+  /* MODAL & TOAST */
+  .modal-overlay {
+    display: none;
+    position: absolute;
+    inset: 0;
+    background: rgba(3, 6, 12, 0.82);
+    backdrop-filter: blur(6px);
+    padding: 20px;
+    justify-content: center;
+    align-items: center;
+    z-index: 50;
+  }
+
+  .modal-overlay.open {
+    display: flex;
+  }
+
+  .modal-card {
+    background: #11192b;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 22px;
+    padding: 20px;
+    max-height: 82%;
+    overflow-y: auto;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .modal-card h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #ffffff;
+  }
+
+  .toast {
+    position: absolute;
+    top: 76px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1d2b4a;
+    border: 1px solid #5b82ff;
+    color: #ffffff;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+    z-index: 60;
+    white-space: nowrap;
+  }
+
+  .toast.show {
+    opacity: 1;
+  }
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+  <div class="toast" id="toast">Уведомление</div>
+
+  <div class="app-header">
+    <div class="logo-title"><span>IT</span>.МИТ</div>
+    <div class="logo-sub">ЭКОСИСТЕМА <span>IT</span>.МОСКВА</div>
+  </div>
+
+  <!-- 1. AUTH SCREEN -->
+  <div class="screen active" id="screen-auth">
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-reg" onclick="switchAuthMode('reg')">Регистрация</button>
+        <button class="auth-tab" id="tab-login" onclick="switchAuthMode('login')">Вход</button>
+      </div>
+
+      <div id="reg-only-fields">
+        <label class="field-label">Имя и возраст</label>
+        <input type="text" class="input-field" id="auth-name" value="Вероника, 17" />
+
+        <label class="field-label">Курс и учебная группа</label>
+        <input type="text" class="input-field" id="auth-group" value="2 курс • Группа 2ип-7-25" />
+      </div>
+
+      <label class="field-label">Учебный Email (IT.МОСКВА)</label>
+      <input type="email" class="input-field" id="auth-email" value="veronika.2ip@it.moscow" />
+
+      <label class="field-label">Пароль</label>
+      <input type="password" class="input-field" id="auth-pass" value="••••••••" />
+
+      <label class="checkbox-row">
+        <input type="checkbox" id="policy-check" />
+        <span>
+          Я принимаю <span class="policy-link" onclick="openPolicyModal(event)">Политику конфиденциальности и Правила сообщества</span>
+        </span>
+      </label>
+
+      <button class="btn-primary" id="auth-submit-btn" onclick="submitAuth()">Создать анкету и войти</button>
+      <div class="auth-error" id="auth-error"></div>
+    </div>
+
+    <div class="safety-note">
+      <strong>Безопасная среда IT.МОСКВА</strong>
+      Платформа предназначена исключительно для поиска тиммейтов на хакатоны, учебные и пет-проекты. Спам и токсичность блокируются модерацией.
+    </div>
+  </div>
+
+  <!-- 2. SEARCH SCREEN -->
+  <div class="screen" id="screen-search">
+    <div class="swipe-container" id="swipe-area"></div>
+  </div>
+
+  <!-- 3. CHATS SCREEN -->
+  <div class="screen" id="screen-chats">
+    <div id="chats-list-view">
+      <div class="section-title">Командные чаты</div>
+      <div id="chats-container"></div>
+    </div>
+
+    <div class="dialog-box" id="active-dialog-view">
+      <div class="dialog-header">
+        <button class="btn-back" onclick="closeDialog()">← Назад</button>
+        <div class="dialog-peer-meta">
+          <div class="dialog-peer-name" id="dialog-peer-name">Имя</div>
+          <div class="dialog-peer-status" id="dialog-peer-status">В сети</div>
+        </div>
+        <button class="btn-report" onclick="reportUser()">Жалоба</button>
+      </div>
+
+      <div class="messages-area" id="messages-area"></div>
+
+      <div class="chat-input-row">
+        <input type="text" class="chat-input" id="chat-input" placeholder="Написать сообщение..." onkeydown="if(event.key==='Enter') sendMessage()" />
+        <button class="btn-send" onclick="sendMessage()">→</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. PROFILE SCREEN -->
+  <div class="screen" id="screen-profile">
+    <div class="section-title">Мой профиль</div>
+    <div class="profile-card">
+      <div class="profile-header-row">
+        <div class="profile-avatar" id="prof-avatar-box">В</div>
+        <div>
+          <div style="font-size: 16px; font-weight: 800;" id="prof-display-name">Вероника, 17</div>
+          <div style="font-size: 12px; color: rgba(255,255,255,0.65); margin-top: 2px;" id="prof-display-group">2 курс • Группа 2ип-7-25</div>
+          <div style="margin-top: 5px;">
+            <span class="status-pill"><span class="status-dot online"></span> В сети</span>
+          </div>
+          <input type="file" id="photo-input" accept="image/*" style="display: none;" onchange="handlePhotoUpload(event)" />
+          <button class="btn-upload-photo" onclick="document.getElementById('photo-input').click()">Добавить фото</button>
+        </div>
+      </div>
+
+      <label class="field-label">Имя и возраст</label>
+      <input type="text" class="input-field" id="prof-name" value="Вероника, 17" />
+
+      <label class="field-label">Курс и группа</label>
+      <input type="text" class="input-field" id="prof-group" value="2 курс • Группа 2ип-7-25" />
+
+      <label class="field-label">Главная роль</label>
+      <input type="text" class="input-field" id="prof-role" value="UI/UX Дизайнер & Frontend" />
+
+      <label class="field-label">Суперсила</label>
+      <input type="text" class="input-field" id="prof-superpower" value="Собираю кликабельные прототипы в Figma за вечер" />
+
+      <label class="field-label">О себе</label>
+      <input type="text" class="input-field" id="prof-bio" value="Учусь в IT.МОСКВА, ищу команду для пет-проектов" />
+
+      <button class="btn-primary" onclick="saveProfile()">Сохранить изменения</button>
+      <button class="btn-danger" onclick="logoutUser()">Выйти из аккаунта</button>
+    </div>
+  </div>
+
+  <!-- BOTTOM TAB BAR -->
+  <div class="tab-bar" id="tab-bar">
+    <button class="tab-btn active" id="nav-search" onclick="switchTab('search')">Поиск</button>
+    <button class="tab-btn" id="nav-chats" onclick="switchTab('chats')">Чаты</button>
+    <button class="tab-btn" id="nav-profile" onclick="switchTab('profile')">Профиль</button>
+  </div>
+
+  <!-- POLICY MODAL -->
+  <div class="modal-overlay" id="policy-modal" onclick="closePolicyModal()">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <h3>Политика конфиденциальности и Правила сообщества IT.МИТ</h3>
+      <p style="margin-bottom: 10px;">
+        1. <strong>Назначение платформы:</strong> сервис «IT.МИТ» создан для студентов колледжа IT.МОСКВА с целью формирования команд для хакатонов, курсовых, дипломных и пет-проектов.
+      </p>
+      <p style="margin-bottom: 10px;">
+        2. <strong>Персональные данные:</strong> указывая имя, учебную группу и стек навыков, пользователь соглашается на отображение анкеты другим студентам внутри образовательной экосистемы.
+      </p>
+      <p style="margin-bottom: 14px;">
+        3. <strong>Правила общения:</strong> запрещены оскорбления, спам и публикация сторонней рекламы. Нарушители блокируются по кнопке «Жалоба».
+      </p>
+      <button class="btn-primary" style="margin-top: 0;" onclick="closePolicyModal()">Понятно, закрыть</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const candidates = [
+    {
+      id: 1,
+      name: "Алина, 18",
+      group: "3 курс • Группа 3ис-2-24",
+      role: "Frontend-разработчик",
+      online: true,
+      statusText: "В сети",
+      bio: "Верстаю адаптивные интерфейсы на React и TypeScript без лишних костылей.",
+      superpower: "Поднимаю фронтенд-архитектуру за пару часов",
+      skills: ["React", "TypeScript", "CSS3", "Git"],
+      initialReply: "Привет! Видела твои прототипы, ищем дизайнера в команду на хакатон.",
+      replies: [
+        "Отлично! У нас как раз не хватает сильного UI/UX на этап прототипирования.",
+        "Давай сегодня вечером созвонимся в Discord и обсудим распределение задач?"
+      ]
+    },
+    {
+      id: 2,
+      name: "Максим, 18",
+      group: "3 курс • Группа 3ип-4-24",
+      role: "Backend & Базы данных",
+      online: false,
+      statusText: "Был в сети 15 мин назад",
+      bio: "Проектирую REST API на Python (FastAPI) и PostgreSQL, настраиваю Docker.",
+      superpower: "Оптимизирую медленные SQL-запросы за 10 минут",
+      skills: ["Python", "FastAPI", "PostgreSQL", "Docker"],
+      initialReply: "Здарова! С радостью возьму на себя серверную часть и базу данных.",
+      replies: []
+    },
+    {
+      id: 3,
+      name: "Дарья, 17",
+      group: "2 курс • Группа 2ип-5-25",
+      role: "Product & Питчинг",
+      online: true,
+      statusText: "В сети",
+      bio: "Готовлю презентации, считаю экономику проекта и защищаю решение перед жюри.",
+      superpower: "Умею уложить суть сложного IT-продукта в 3 минуты питча",
+      skills: ["Figma", "CustDev", "Презентации", "Аналитика"],
+      initialReply: "Привет! Нужен фронтенд и дизайн для сервиса навигации по колледжу.",
+      replies: [
+        "Супер! Могу скинуть черновик презентации и структуру экранов.",
+        "Отлично, тогда фиксируем команду и начинаем собирать MVP!"
+      ]
+    },
+    {
+      id: 4,
+      name: "Артём, 19",
+      group: "4 курс • Группа 4са-1-23",
+      role: "Mobile & DevOps",
+      online: false,
+      statusText: "Был в сети 42 мин назад",
+      bio: "Делаю кроссплатформенные приложения на Flutter и настраиваю CI/CD деплой.",
+      superpower: "Собираю релизный билд под Android и Web без единого падения",
+      skills: ["Flutter", "Dart", "Linux", "Nginx"],
+      initialReply: "Привет! Если понадобится мобильная версия проекта — я в деле.",
+      replies: []
+    }
+  ];
+
+  let authMode = "reg";
+  let currentIndex = 0;
+  let activeChatId = null;
+
+  const chats = [
+    {
+      id: 1,
+      name: "Алина, 18",
+      online: true,
+      statusText: "В сети",
+      replyStep: 0,
+      replies: candidates[0].replies,
+      messages: [
+        { sender: "peer", text: candidates[0].initialReply }
+      ]
+    },
+    {
+      id: 2,
+      name: "Максим, 18",
+      online: false,
+      statusText: "Был в сети 15 мин назад",
+      replyStep: 0,
+      replies: [],
+      messages: [
+        { sender: "peer", text: candidates[1].initialReply }
+      ]
+    }
+  ];
+
+  function showToast(text) {
+    const el = document.getElementById("toast");
+    el.textContent = text;
+    el.classList.add("show");
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => el.classList.remove("show"), 2400);
+  }
+
+  function switchAuthMode(mode) {
+    authMode = mode;
+    document.getElementById("tab-reg").classList.toggle("active", mode === "reg");
+    document.getElementById("tab-login").classList.toggle("active", mode === "login");
+    document.getElementById("reg-only-fields").style.display = mode === "reg" ? "block" : "none";
+    document.getElementById("auth-submit-btn").textContent =
+      mode === "reg" ? "Создать анкету и войти" : "Войти в аккаунт";
+    document.getElementById("auth-error").textContent = "";
+  }
+
+  function openPolicyModal(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    document.getElementById("policy-modal").classList.add("open");
+  }
+
+  function closePolicyModal() {
+    document.getElementById("policy-modal").classList.remove("open");
+  }
+
+  function submitAuth() {
+    const checked = document.getElementById("policy-check").checked;
+    const errEl = document.getElementById("auth-error");
+    if (!checked) {
+      errEl.textContent = "Подтвердите согласие с Политикой конфиденциальности";
+      return;
+    }
+    errEl.textContent = "";
+
+    if (authMode === "reg") {
+      const nameVal = document.getElementById("auth-name").value.trim() || "Вероника, 17";
+      const groupVal = document.getElementById("auth-group").value.trim() || "2 курс • Группа 2ип-7-25";
+      document.getElementById("prof-name").value = nameVal;
+      document.getElementById("prof-group").value = groupVal;
+      document.getElementById("prof-display-name").textContent = nameVal;
+      document.getElementById("prof-display-group").textContent = groupVal;
+      if (!document.getElementById("prof-avatar-box").querySelector("img")) {
+        document.getElementById("prof-avatar-box").textContent = nameVal.charAt(0).toUpperCase();
+      }
+    }
+
+    document.getElementById("screen-auth").classList.remove("active");
+    document.getElementById("tab-bar").classList.add("visible");
+    switchTab("search");
+    renderCurrentCard();
+    renderChatsList();
+  }
+
+  function switchTab(tab) {
+    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+
+    document.getElementById("screen-" + tab).classList.add("active");
+    document.getElementById("nav-" + tab).classList.add("active");
+
+    if (tab === "search") renderCurrentCard();
+    if (tab === "chats") renderChatsList();
+  }
+
+  function renderCurrentCard() {
+    const area = document.getElementById("swipe-area");
+    if (currentIndex >= candidates.length) {
+      area.innerHTML = `
+        <div class="empty-state">
+          <h3>Вы просмотрели все анкеты</h3>
+          <p>Перейдите во вкладку «Чаты», чтобы написать тиммейтам, или обновите ленту заново.</p>
+          <button class="btn-primary" onclick="resetCards()">Показать карточки снова</button>
+        </div>
+      `;
+      return;
+    }
+
+    const c = candidates[currentIndex];
+    const dotClass = c.online ? "online" : "offline";
+    const tagsHtml = c.skills.map(s => `<span class="skill-tag">${s}</span>`).join("");
+
+    area.innerHTML = `
+      <div class="candidate-card" id="active-card">
+        <div class="card-top-meta">
+          <span class="group-badge">${c.group}</span>
+          <span class="status-pill">
+            <span class="status-dot ${dotClass}"></span>
+            ${c.statusText}
+          </span>
+        </div>
+
+        <div class="candidate-identity">
+          <div class="candidate-avatar">${c.name.charAt(0)}</div>
+          <div>
+            <div class="candidate-name">${c.name}</div>
+            <div class="candidate-role">${c.role}</div>
+          </div>
+        </div>
+
+        <div class="candidate-bio">${c.bio}</div>
+
+        <div class="superpower-box">
+          <span>Суперсила:</span> ${c.superpower}
+        </div>
+
+        <div class="tags-row">${tagsHtml}</div>
+
+        <div class="card-actions">
+          <button class="action-btn btn-pass" title="Пропустить" onclick="swipeCard('left')">✕</button>
+          <button class="action-btn btn-like" title="Пригласить в команду" onclick="swipeCard('right')">✓</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function swipeCard(dir) {
+    const card = document.getElementById("active-card");
+    if (!card) return;
+
+    const cand = candidates[currentIndex];
+    card.classList.add(dir === "left" ? "swipe-left" : "swipe-right");
+
+    if (dir === "right") {
+      const exists = chats.find(ch => ch.id === cand.id);
+      if (!exists) {
+        chats.unshift({
+          id: cand.id,
+          name: cand.name,
+          online: cand.online,
+          statusText: cand.statusText,
+          replyStep: 0,
+          replies: cand.replies,
+          messages: [
+            { sender: "peer", text: cand.initialReply }
+          ]
+        });
+      }
+      showToast("Взаимный интерес! Чат с " + cand.name.split(",")[0] + " создан");
+    }
+
+    setTimeout(() => {
+      currentIndex++;
+      renderCurrentCard();
+    }, 280);
+  }
+
+  function resetCards() {
+    currentIndex = 0;
+    renderCurrentCard();
+  }
+
+  function renderChatsList() {
+    const container = document.getElementById("chats-container");
+    container.innerHTML = chats.map(ch => {
+      const lastMsg = ch.messages[ch.messages.length - 1];
+      const dotClass = ch.online ? "online" : "offline";
+      return `
+        <div class="chat-item" onclick="openDialog(${ch.id})">
+          <div class="chat-avatar-wrap">
+            <div class="chat-avatar">${ch.name.charAt(0)}</div>
+            <span class="avatar-status-dot ${dotClass}"></span>
+          </div>
+          <div class="chat-info">
+            <div class="chat-name-row">
+              <span class="chat-name">${ch.name}</span>
+              <span class="chat-status-text ${dotClass}">${ch.statusText}</span>
+            </div>
+            <div class="chat-preview">${lastMsg ? lastMsg.text : "Начните диалог"}</div>
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  function openDialog(chatId) {
+    activeChatId = chatId;
+    const ch = chats.find(c => c.id === chatId);
+    if (!ch) return;
+
+    document.getElementById("chats-list-view").style.display = "none";
+    document.getElementById("active-dialog-view").classList.add("active");
+
+    document.getElementById("dialog-peer-name").textContent = ch.name;
+    const statusEl = document.getElementById("dialog-peer-status");
+    statusEl.className = "dialog-peer-status " + (ch.online ? "online" : "");
+    statusEl.innerHTML = `<span class="status-dot ${ch.online ? "online" : "offline"}"></span> ${ch.statusText}`;
+
+    renderMessages(ch);
+  }
+
+  function closeDialog() {
+    activeChatId = null;
+    document.getElementById("active-dialog-view").classList.remove("active");
+    document.getElementById("chats-list-view").style.display = "block";
+    renderChatsList();
+  }
+
+  function renderMessages(ch) {
+    const area = document.getElementById("messages-area");
+    area.innerHTML = ch.messages.map(m => {
+      if (m.sender === "system") {
+        return `<div class="msg-system">${m.text}</div>`;
+      }
+      const cls = m.sender === "me" ? "msg-me" : "msg-peer";
+      return `<div class="msg-bubble ${cls}">${m.text}</div>`;
+    }).join("");
+    area.scrollTop = area.scrollHeight;
+  }
+
+  function sendMessage() {
+    const input = document.getElementById("chat-input");
+    const text = input.value.trim();
+    if (!text || !activeChatId) return;
+
+    const ch = chats.find(c => c.id === activeChatId);
+    if (!ch) return;
+
+    ch.messages.push({ sender: "me", text });
+    input.value = "";
+    renderMessages(ch);
+
+    if (ch.online) {
+      setTimeout(() => {
+        const replyText = ch.replies[ch.replyStep % ch.replies.length] || "Принято! Обсудим детали проекта.";
+        ch.replyStep++;
+        ch.messages.push({ sender: "peer", text: replyText });
+        if (activeChatId === ch.id) renderMessages(ch);
+      }, 650);
+    } else {
+      const alreadyNotified = ch.messages.some(m => m.sender === "system");
+      if (!alreadyNotified) {
+        setTimeout(() => {
+          ch.messages.push({
+            sender: "system",
+            text: `${ch.name.split(",")[0]} сейчас не в сети (${ch.statusText.toLowerCase()}). Сообщение доставлено и будет прочитано позже.`
+          });
+          if (activeChatId === ch.id) renderMessages(ch);
+        }, 350);
+      }
+    }
+  }
+
+  function reportUser() {
+    showToast("Жалоба отправлена модераторам IT.МОСКВА");
+  }
+
+  function handlePhotoUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const box = document.getElementById("prof-avatar-box");
+      box.innerHTML = `<img src="${e.target.result}" alt="Аватар" />`;
+      showToast("Фото профиля обновлено");
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function saveProfile() {
+    const name = document.getElementById("prof-name").value.trim() || "Вероника, 17";
+    const group = document.getElementById("prof-group").value.trim() || "2 курс • Группа 2ип-7-25";
+    document.getElementById("prof-display-name").textContent = name;
+    document.getElementById("prof-display-group").textContent = group;
+    const box = document.getElementById("prof-avatar-box");
+    if (!box.querySelector("img")) {
+      box.textContent = name.charAt(0).toUpperCase();
+    }
+    showToast("Изменения профиля сохранены");
+  }
+
+  function logoutUser() {
+    document.getElementById("policy-check").checked = false;
+    document.getElementById("tab-bar").classList.remove("visible");
+    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+    document.getElementById("screen-auth").classList.add("active");
+  }
+</script>
+</body>
+</html>
